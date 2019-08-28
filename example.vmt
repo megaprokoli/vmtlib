@@ -1,0 +1,18 @@
+LightmappedGeneric
+{
+$baseTexture "brick/not_existing"
+$surfaceprop brick
+$ssbump 1
+$bumpmap "brick/not_existing_height-ssbump"
+"%keywords" l4d2
+	Proxies
+	{
+		Sine
+		{
+			resultVar $alpha
+			sineperiod 8
+			sinemin 0
+			sinemax 1
+		}
+	}
+}
