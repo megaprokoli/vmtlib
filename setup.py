@@ -10,7 +10,7 @@ setuptools.setup(
     description="A simple parser for Valve Material Type (.vmt) files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/",
+    url="https://github.com/megaprokoli/vmtlib",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
