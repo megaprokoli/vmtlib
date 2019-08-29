@@ -2,9 +2,11 @@ import os
 
 from vmtlib.vmt_object import VmtObject
 
+# TODO args with spaces in ""
+
 
 class VmtFile:
-    def __init__(self, path):
+    def __init__(self, path=None):
         self._content = ""
 
         self.path = path
@@ -14,16 +16,27 @@ class VmtFile:
         return self.shader.stringify()
 
     @property
+    def initialized(self):
+        return self.shader is not None
+
+    @property
     def filename(self):
-        return os.path.basename(self.path)
+        return os.path.basename(self.path) if self.path is not None else None
 
     @property
     def directory(self):
-        return os.path.dirname(os.path.abspath(self.path))
+        return os.path.dirname(os.path.abspath(self.path)) if self.path is not None else None
 
     @property
     def dict(self):
         return {self.shader.name: self.shader.dict}
+
+    def from_dict(self, dict):
+        if len(dict) == 1:
+            key = list(dict.keys())[0]
+            self.shader = VmtObject(name=key, dict=dict[key])
+        else:
+            raise ValueError("The dict can only contain one key for the shader name!")
 
     def read(self):
         with open(self.path, "r") as file:

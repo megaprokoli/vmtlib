@@ -2,16 +2,20 @@ import re
 
 
 class VmtObject:
-    def __init__(self, name, span, string):
+    def __init__(self, name, span=None, string=None, dict=None):
         self.name = name
-        self.string = string[span[0]:span[1]]
-        self.work_str = ""
-        self.span = span
         self.attributes = {}
         self.childs = {}
 
-        self.__add_childs()
-        self.__fetchlines()
+        if string is not None and span is not None:  # if from dict and not string
+            self.string = string[span[0]:span[1]]
+            self.work_str = ""
+            self.span = span
+
+            self.__add_childs()
+            self.__fetchlines()
+        elif dict is not None:
+            self.__from_dict(dict)
 
     @property
     def dict(self):
@@ -74,6 +78,17 @@ class VmtObject:
 
         string += "}\n"
         return string
+
+    def __from_dict(self, d):
+        keys = d.keys()
+
+        for k in list(keys):
+            v = d[k]
+
+            if isinstance(v, dict):
+                self.childs.update({k: VmtObject(name=k, dict=v)})
+            else:
+                self.attributes.update({k: v})
 
     def __add_childs(self):
         work_str = self.string
