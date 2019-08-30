@@ -10,9 +10,9 @@ $bumpmap "brick/not_existing_height-ssbump"
 		Sine
 		{
 			resultVar $alpha
-			sineperiod 8
-			sinemin 0
-			sinemax 1
+			sineperiod	8
+			sinemin		0
+			sinemax		1
 		}
 	}
 }
