@@ -106,17 +106,14 @@ class VmtObject:
         self.work_str = work_str
 
     def __parse_attributes(self, string):
-        sep_chars = [" ", "\t"]
         key = None
         val = None
 
-        for s in sep_chars:
-            split = string.split(s)
-
-            if len(split) >= 2:
-                key = self.__cleanup_name(split[0])
-                val = self.__cleanup_name(split[1])
-                break
+        arg_match = re.search(r"([^\t]\w+)(\t+| +)(.+)", string)
+        if arg_match is not None:
+            g = arg_match.groups()
+            key = g[0]
+            val = g[2]
 
         return key, val
 
@@ -127,7 +124,8 @@ class VmtObject:
 
             if char == "\n":
                 if tmp != "":   # TODO \t seperates attr and val
-                    tmp = "".join(list(filter(lambda c: ord(c) >= 32, tmp)))    # filter control chars
+                    # tmp = re.sub(r"\t+", " ", tmp)
+                    # tmp = "".join(list(filter(lambda c: ord(c) >= 32, tmp)))    # filter control chars
                     k, v = self.__parse_attributes(tmp)
 
                     if k is not None:

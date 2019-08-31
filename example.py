@@ -1,14 +1,9 @@
 from vmtlib.vmt_file import VmtFile
 
 
-vmt = VmtFile()
+vmt = VmtFile("example.vmt")
 
-# vmt.read()
-
-
-d = {"shader": {"$basetexture": "brick", "Proxies": {"key": "val"}}}
-
-vmt.from_dict(d)
+vmt.read()
 
 vmt.shader.set("$basetexture", "new")
 
