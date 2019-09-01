@@ -2,7 +2,9 @@ import re
 
 
 class VmtObject:
-    def __init__(self, name, span=None, string=None, dict=None):
+    def __init__(self, name, span=None, string=None, dict=None, layer=0):
+        self._layer = layer  # for output formatting
+
         self.name = name
         self.attributes = {}
         self.childs = {}
@@ -16,6 +18,10 @@ class VmtObject:
             self.__fetchlines()
         elif dict is not None:
             self.__from_dict(dict)
+
+    @property
+    def layer_char(self):
+        return "\t" * self._layer
 
     @property
     def dict(self):
@@ -66,17 +72,18 @@ class VmtObject:
             self.attributes[attr] = val
 
     def stringify(self):
+        print(self.name + " - " + str(self._layer))
         string = ""
 
-        string += self.name + "\n{\n"
+        string += self.layer_char + self.name + "\n" + self.layer_char + "{\n"
 
         for k in self.attributes.keys():
-            string += "{} {}\n".format(k, self.attributes[k])
+            string += "{}{} {}\n".format(self.layer_char, k, self.attributes[k])
 
         for v in self.childs.values():
             string += v.stringify()
 
-        string += "}\n"
+        string += self.layer_char + "}\n"
         return string
 
     def __from_dict(self, d):
@@ -86,7 +93,7 @@ class VmtObject:
             v = d[k]
 
             if isinstance(v, dict):
-                self.childs.update({k: VmtObject(name=k, dict=v)})
+                self.childs.update({k: VmtObject(name=k, dict=v, layer=self._layer + 1)})
             else:
                 self.attributes.update({k: v})
 
@@ -97,9 +104,12 @@ class VmtObject:
 
         while obj_pos is not None:
 
-            self.childs.update({obj_pos["name"]: VmtObject(obj_pos["name"], obj_pos["span"], self.string)})
+            self.childs.update({obj_pos["name"]: VmtObject(name=obj_pos["name"],
+                                                           span=obj_pos["span"],
+                                                           string=self.string,
+                                                           layer=self._layer + 1)})
             span = obj_pos["span"]
-            work_str = work_str.replace("".join(work_str[span[0]-1:span[1]+1]), "")
+            work_str = work_str.replace("".join(work_str[span[0]-1:span[1]+1]), "")     # extracted child + { and }
 
             obj_pos = self.detect_objects(work_str)
 
@@ -123,9 +133,7 @@ class VmtObject:
         for char in self.work_str:
 
             if char == "\n":
-                if tmp != "":   # TODO \t seperates attr and val
-                    # tmp = re.sub(r"\t+", " ", tmp)
-                    # tmp = "".join(list(filter(lambda c: ord(c) >= 32, tmp)))    # filter control chars
+                if tmp != "":
                     k, v = self.__parse_attributes(tmp)
 
                     if k is not None:

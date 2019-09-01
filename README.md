@@ -5,9 +5,8 @@
 VMTlib is a simple parser for Valve Material Type (.vmt) files.
 
 #### Note:
-> 1. At the moment this package doesn't support attribute key-value pairs
-> separated by tabs.
-> 2. The formatting of the write function is very basic.
+> 1. The formatting of the write function is very basic.
+> 2. Attributes containing spaces are not accepted by the parser.
 
 #### Basic Usage:
 ###### Import
